@@ -1,1 +1,1 @@
-# trajectory-rs
+# wayfinder
