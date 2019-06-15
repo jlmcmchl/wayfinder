@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ "$1" = "--debug" ]; then
+    echo "Building in Debug Mode"
+    
+    rm pkg/*
+    wasm-pack build --out-dir pkg --dev --target=web -- --features="debug"
+    
+    ls -l pkg
+elif [ "$1" = "--release" ]; then
+    echo "Building in Release Mode"
+    
+    rm pkg/*
+    wasm-pack build --out-dir pkg --release --target=web
+    ../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_bg.wasm -O4 -o pkg/wayfinder_bg.wasm
+    
+    ls -l pkg
+fi
+
+
+read REPLY
