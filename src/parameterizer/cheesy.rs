@@ -1,18 +1,14 @@
 use crate::math::*;
 use crate::spline::{Hermite, Spline};
 use crate::Parameterizer;
-use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
 pub struct Cheesy {
     max_dx: f64,
     max_dy: f64,
     max_dt: f64,
 }
 
-#[wasm_bindgen]
 impl Cheesy {
-    #[wasm_bindgen(constructor)]
     pub fn new(max_dx: f64, max_dy: f64, max_dt: f64) -> Self {
         Cheesy {
             max_dx,

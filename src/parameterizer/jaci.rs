@@ -1,17 +1,13 @@
 use crate::math::*;
 use crate::parameterizer::Parameterizer;
 use crate::spline::{Hermite, Spline};
-use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
 pub struct Jaci {
     max_ds: f64,
     max_dc: f64,
 }
 
-#[wasm_bindgen]
 impl Jaci {
-    #[wasm_bindgen(constructor)]
     pub fn new(max_ds: f64, max_dc: f64) -> Self {
         Jaci { max_ds, max_dc }
     }

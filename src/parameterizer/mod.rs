@@ -7,17 +7,10 @@ pub use jaci::*;
 use crate::spline::Spline;
 use crate::Hermite;
 use crate::Point;
-use wasm_bindgen::prelude::*;
 
 pub enum Param {
     ParamCheesy(Cheesy),
     ParamJaci(Jaci),
-}
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
 }
 
 pub trait Parameterizer {
@@ -52,7 +45,7 @@ pub trait Parameterizer {
                 };
 
                 let point = spline.point_at(t_curr);
-                log(&format!("{}: {:?}", t_curr, point));
+                //log(&format!("{}: {:?}", t_curr, point));
                 out.push(point);
             }
         }
