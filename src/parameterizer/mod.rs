@@ -45,11 +45,8 @@ pub trait Parameterizer {
                 };
 
                 let point = spline.point_at(t_curr);
-                //log(&format!("{}: {:?}", t_curr, point));
                 out.push(point);
             }
         }
-
-        out.push(spline.point_at(t1));
     }
 }
