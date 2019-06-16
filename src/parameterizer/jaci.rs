@@ -33,28 +33,26 @@ impl Parameterizer for Jaci {
 }
 
 fn arc_length(start: Vec2, mid: Vec2, end: Vec2) -> f64 {
-    let coeff = Vec2x2::new(
-        2.0 * (start.x - end.x),
-        2.0 * (start.y - end.y),
-        2.0 * (start.x - mid.x),
-        2.0 * (start.y - mid.y),
-    );
+    let coeff = [
+        [2.0 * (start.x() - end.x()), 2.0 * (start.y() - end.y())],
+        [2.0 * (start.x() - mid.x()), 2.0 * (start.y() - mid.y())],
+    ];
 
     if coeff.determinant() == 0.0 {
-        (end - start).norm()
+        start.scale(-1.).add(end).norm()
     } else {
-        let rvec = Vec2::new(
+        let rvec = &[
             start.norm_squared() - end.norm_squared(),
             start.norm_squared() - mid.norm_squared(),
-        );
+        ];
 
-        let _ref = coeff.inverse().unwrap() * rvec;
-        let d0 = start - _ref;
-        let d1 = end - _ref;
+        let _ref = coeff.inverse().unwrap().mul(rvec).scale(-1.);
+        let d0 = _ref.add(start);
+        let d1 = _ref.add(end);
 
         let curv = 1.0 / d0.norm();
-        let a0 = d0.y.atan2(d0.x);
-        let a1 = d1.y.atan2(d0.x);
+        let a0 = d0.y().atan2(d0.x());
+        let a1 = d1.y().atan2(d0.x());
 
         (a1 - a0).abs() / curv
     }

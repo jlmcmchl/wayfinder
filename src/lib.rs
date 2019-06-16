@@ -1,4 +1,4 @@
-//use argmin::prelude::*;
+use argmin::prelude::*;
 //use argmin::solver::gradientdescent::SteepestDescent;
 //use argmin::solver::linesearch::HagerZhangLineSearch;
 use cfg_if::cfg_if;
@@ -115,59 +115,58 @@ pub fn wps_to_path(//wps_value: JsValue,     // Vec<Waypoint>
     //param_value: JsValue,   // Param
 ) {
     //->  JsValue { // Vec<Point>
-/*
-    let wps: Vec<Waypoint> = match serde_wasm_bindgen::from_value(wps_value) {
-        Ok(res) => res,
-        Err(err) => {
-            log(&format!("{}", err));
-            return JsValue::NULL;
-        }
-    };
+    /*
+        let wps: Vec<Waypoint> = match serde_wasm_bindgen::from_value(wps_value) {
+            Ok(res) => res,
+            Err(err) => {
+                log(&format!("{}", err));
+                return JsValue::NULL;
+            }
+        };
 
-    let param: Param = match serde_wasm_bindgen::from_value(param_value) {
-        Ok(res) => res,
-        Err(err) => {
-            log(&format!("{}", err));
-            return JsValue::NULL;
-        }
-    };
-*/
-    let param = Cheesy::new(1.0, 1.0, 3.);
+        let param: Param = match serde_wasm_bindgen::from_value(param_value) {
+            Ok(res) => res,
+            Err(err) => {
+                log(&format!("{}", err));
+                return JsValue::NULL;
+            }
+        };
+    */
+    let param = Cheesy::new(10., 10., 5.);
     let wps = vec![
-        Waypoint::new(0.,0.,10.,0.,0.,0.),
-        Waypoint::new(100., 100., 0., 10., 0., 0.)
+        Waypoint::new(0., 0., 10., 0., 0., 0.),
+        Waypoint::new(100., 100., 0., 10., 0., 0.),
     ];
 
-    let hermites = Hermite::hermites(&wps);
+    let hermites = spline::hermites(&wps);
 
     for hermite in &hermites {
         log(&format!("{:?}", hermite));
     }
 
-    
-    let segments = param.parameterize(&hermites);
+    //let segments = param.parameterize(&hermites);
 
-    log(&format!("Len: {}", segments.len()));
+    //log(&format!("Len: {}", segments.len()));
     /*for segment in segments {
         log(&format!("{:?}", segment));
     }*/
-    
-/*
-    let segments = match param {
-        Param::ParamCheesy(cheesy) => cheesy.parameterize(hermites),
-        Param::ParamJaci(jaci) => jaci.parameterize(hermites),
-    };
 
-    //Some(param.parameterize(hermites))
+    /*
+        let segments = match param {
+            Param::ParamCheesy(cheesy) => cheesy.parameterize(hermites),
+            Param::ParamJaci(jaci) => jaci.parameterize(hermites),
+        };
 
-    match serde_wasm_bindgen::to_value(&segments) {
-        Ok(segments_value) => segments_value,
-        Err(err) => {
-            log(&format!("{}", err));
-            return JsValue::NULL;
+        //Some(param.parameterize(hermites))
+
+        match serde_wasm_bindgen::to_value(&segments) {
+            Ok(segments_value) => segments_value,
+            Err(err) => {
+                log(&format!("{}", err));
+                return JsValue::NULL;
+            }
         }
-    }
-*/
+    */
 }
 /*
 #[wasm_bindgen]

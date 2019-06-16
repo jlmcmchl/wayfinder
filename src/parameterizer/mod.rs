@@ -4,13 +4,14 @@ mod jaci;
 pub use cheesy::*;
 pub use jaci::*;
 
+use crate::spline::Spline;
 use crate::Hermite;
 use crate::Point;
 use wasm_bindgen::prelude::*;
 
 pub enum Param {
     ParamCheesy(Cheesy),
-    ParamJaci(Jaci)
+    ParamJaci(Jaci),
 }
 
 #[wasm_bindgen]
@@ -18,7 +19,6 @@ extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
 }
-
 
 pub trait Parameterizer {
     fn should_subdivide(&self, spline: &Hermite, t_curr: f64, t_step: f64) -> bool;

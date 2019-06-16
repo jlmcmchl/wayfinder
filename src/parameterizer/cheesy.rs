@@ -1,5 +1,5 @@
 use crate::math::*;
-use crate::spline::Hermite;
+use crate::spline::{Hermite, Spline};
 use crate::Parameterizer;
 use wasm_bindgen::prelude::*;
 
@@ -30,7 +30,7 @@ impl Parameterizer for Cheesy {
         let r1 = p1.heading();
 
         let tf = Pose::new(
-            Translation::rotate_by(p1.position - p0.position, r0.inverse()),
+            Translation::rotate_by(p0.position.scale(-1.).add(p1.position), r0.inverse()),
             Rotation::rotate_by(r1, r0.inverse()),
         );
         let twist = tf.log();

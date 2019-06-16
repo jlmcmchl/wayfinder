@@ -1,7 +1,5 @@
-use crate::math::Vec2;
-use wasm_bindgen::prelude::*;
+use crate::math::{Coordinate, Vec2, Vector};
 
-#[wasm_bindgen]
 #[derive(Debug)]
 pub struct Point {
     pub position: Vec2,
@@ -10,14 +8,13 @@ pub struct Point {
     pub jerk: Vec2,
 }
 
-#[wasm_bindgen]
 impl Point {
     pub fn heading(&self) -> Vec2 {
         self.velocity
     }
 
     pub fn curvature(&self) -> f64 {
-        (self.velocity.x * self.acceleration.y - self.velocity.y * self.acceleration.x)
+        (self.velocity.x() * self.acceleration.y() - self.velocity.y() * self.acceleration.x())
             / self.velocity.norm().powi(3)
     }
 }
