@@ -105,12 +105,16 @@ extern "C" {
     fn log(s: &str);
 }
 
-#[wasm_bindgen]
-pub fn wps_to_path(
-    //wps_value: JsValue,     // Vec<Waypoint>
-    //param_value: JsValue,   // Param
-) { //->  JsValue { // Vec<Point>
+#[wasm_bindgen(start)]
+pub fn main() {
     set_panic_hook();
+}
+
+#[wasm_bindgen]
+pub fn wps_to_path(//wps_value: JsValue,     // Vec<Waypoint>
+    //param_value: JsValue,   // Param
+) {
+    //->  JsValue { // Vec<Point>
 /*
     let wps: Vec<Waypoint> = match serde_wasm_bindgen::from_value(wps_value) {
         Ok(res) => res,
@@ -168,8 +172,6 @@ pub fn wps_to_path(
 /*
 #[wasm_bindgen]
 pub fn optimize(wp_repr: &mut [f64]) -> Vec<f64> {
-    set_panic_hook();
-
     let wps: Vec<waypoint::Waypoint> = wp_repr
         .chunks_mut(6)
         .map(|chunk| waypoint::Waypoint::from_array(chunk))
