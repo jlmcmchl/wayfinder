@@ -1,21 +1,30 @@
 #!/bin/sh
 
-if [ "$1" = "--debug" ]; then
+if [ "$1" = "--dev" ]; then
     echo "Building in Debug Mode"
     
     rm pkg/*
-    wasm-pack build --out-dir pkg --dev --target=web -- --features="debug"
+    wasm-pack build --out-dir pkg --dev --target=web -- --features="console_error_panic_hook"
     
-    ls -l pkg
+    ls -l pkg/wayfinder_bg.wasm
+elif [ "$1" = "--profiling" ]; then
+    echo "Building in Debug Mode"
+    
+    rm pkg/*
+    wasm-pack build --out-dir pkg --profiling --target=web -- --features="console_error_panic_hook"
+    ../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_bg.wasm -O3 -o pkg/wayfinder_bg.wasm
+
+    
+    ls -l pkg/wayfinder_bg.wasm
 elif [ "$1" = "--release" ]; then
     echo "Building in Release Mode"
     
     rm pkg/*
     wasm-pack build --out-dir pkg --release --target=web
-    ../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_bg.wasm -O4 -o pkg/wayfinder_bg.wasm
+    ../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_bg.wasm -O3 -o pkg/wayfinder_bg.wasm
     
-    ls -l pkg
+    ls -l pkg/wayfinder_bg.wasm
 fi
 
 
-read REPLY
+date
