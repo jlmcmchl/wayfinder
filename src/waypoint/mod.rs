@@ -1,4 +1,4 @@
-use crate::math::Vec2;
+use crate::Vec2;
 
 pub struct Waypoint {
     pub point: Vec2,

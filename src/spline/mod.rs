@@ -1,10 +1,8 @@
 mod hermite;
 
-use crate::Waypoint;
 pub use hermite::*;
 
-use crate::math::{Vec2, Vector};
-use crate::point::Point;
+use crate::{Vec2, Vector, Point, Waypoint};
 
 pub trait Spline<T> {
     fn from_wps(start: &Waypoint, end: &Waypoint) -> T;

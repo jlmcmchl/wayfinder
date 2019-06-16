@@ -1,6 +1,4 @@
-use crate::math::*;
-use crate::spline::{Hermite, Spline};
-use crate::Parameterizer;
+use crate::{Hermite, Spline, Parameterizer, Pose, Translation, Rotation, Vector};
 
 pub struct Cheesy {
     max_dx: f64,

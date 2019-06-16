@@ -1,6 +1,4 @@
-use crate::math::*;
-use crate::parameterizer::Parameterizer;
-use crate::spline::{Hermite, Spline};
+use crate::{Hermite, Spline, Parameterizer, Vec2, Matrix, MatMul, Vector, Coordinate};
 
 pub struct Jaci {
     max_ds: f64,
@@ -42,7 +40,7 @@ fn arc_length(start: Vec2, mid: Vec2, end: Vec2) -> f64 {
             start.norm_squared() - mid.norm_squared(),
         ];
 
-        let _ref = coeff.inverse().unwrap().mul(rvec).scale(-1.);
+        let _ref = Matrix::inverse(&coeff).unwrap().mul(rvec).scale(-1.);
         let d0 = _ref.add(start);
         let d1 = _ref.add(end);
 

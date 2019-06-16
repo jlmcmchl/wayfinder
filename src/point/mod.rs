@@ -1,4 +1,4 @@
-use crate::math::{Coordinate, Vec2, Vector};
+use crate::{Coordinate, Vec2, Vector};
 
 #[derive(Debug)]
 pub struct Point {
