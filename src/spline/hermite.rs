@@ -1,5 +1,4 @@
 use crate::math::*;
-use crate::point::Point;
 use crate::spline::Spline;
 use crate::waypoint::*;
 

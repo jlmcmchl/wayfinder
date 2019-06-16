@@ -28,7 +28,7 @@ pub trait Spline<T> {
         d.scale(1. / d.norm())
     }
 
-    fn curvature(&self, t: f64) -> f64 {
+    fn curvature(&self, _: f64) -> f64 {
         0.
     }
 

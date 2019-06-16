@@ -199,6 +199,7 @@ impl MatMul<Mat6> for Mat2x6 {
     }
 }
 
+#[allow(dead_code)]
 pub type Mat2 = [Vec2; 2];
 
 impl Matrix for Mat2 {
