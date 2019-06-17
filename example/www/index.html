@@ -6,7 +6,7 @@
     <script type="module">
         import init from "./wayfinder_wasm.js";
 
-        init("./wayfinder_wasm_bg.wasm").then(inst => inst.wps_to_path());
+        init().then(init => init.optimize());
 
         function L(x) {
             if (0 <= x && x <= 20 * Math.SQRT1_2) {

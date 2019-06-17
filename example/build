@@ -12,16 +12,15 @@ elif [ "$1" = "--profiling" ]; then
     
     rm pkg/*
     wasm-pack build --out-dir pkg --profiling --target=web -- --features="console_error_panic_hook"
-    ../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_wasm_bg.wasm -O3 -o pkg/wayfinder_wasm_bg.wasm
+    ../../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_wasm_bg.wasm -O3 -o pkg/wayfinder_wasm_bg.wasm
 
-    
     ls -l pkg/wayfinder_wasm_bg.wasm
 elif [ "$1" = "--release" ]; then
     echo "Building in Release Mode"
     
     rm pkg/*
     wasm-pack build --out-dir pkg --release --target=web
-    ../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_wasm_bg.wasm -O3 -o pkg/wayfinder_wasm_bg.wasm
+    ../../../WebAssembly/binaryen/bin/wasm-opt pkg/wayfinder_wasm_bg.wasm -O3 -o pkg/wayfinder_wasm_bg.wasm
     
     ls -l pkg/wayfinder_wasm_bg.wasm
 fi
