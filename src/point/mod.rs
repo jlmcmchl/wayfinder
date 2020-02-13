@@ -1,6 +1,7 @@
 use crate::{Coordinate, Vec2, Vector};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Point {
     pub position: Vec2,
     pub velocity: Vec2,

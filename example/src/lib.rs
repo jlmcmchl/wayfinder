@@ -4,7 +4,8 @@ use opt::*;
 
 use argmin::prelude::*;
 use argmin::solver::gradientdescent::SteepestDescent;
-use argmin::solver::linesearch::HagerZhangLineSearch;
+use argmin::solver::linesearch::MoreThuenteLineSearch;
+use serde::Deserialize;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
@@ -32,6 +33,14 @@ cfg_if! {
     }
 }
 
+#[derive(Deserialize)]
+pub struct OptParam {
+    pub eps: f64,
+    pub samples: u64,
+    pub max_iters: u64,
+    pub target_cost: f64,
+}
+
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
@@ -44,49 +53,25 @@ pub fn main() {
 }
 
 #[wasm_bindgen]
-pub fn wps_to_path(//wps_value: JsValue,     // Vec<Waypoint>
-    //param_value: JsValue,   // Param
-) {
-    //->  JsValue { // Vec<Point>
-
-    let param = Cheesy::new(1., 1., 5.);
-    let wps = vec![
-        Waypoint::new(0., 0., 10., 0., 0., 0.),
-        Waypoint::new(10., 10., 0., 10., 0., 0.),
-    ];
+pub fn wps_to_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
+    let param: Cheesy = param_value.into_serde().unwrap();
+    let wps: Vec<Waypoint> = wps_value.into_serde().unwrap();
 
     let hermites = hermites(&wps);
 
-    for hermite in &hermites {
-        log(&format!("{:?}", hermite));
-    }
-
     let segments = param.parameterize(&hermites);
 
-    log(&format!("Len: {}", segments.len()));
-    for segment in segments {
-        log(&format!("{:?}", segment));
-    }
+    JsValue::from_serde(&segments).unwrap()
 }
 
 #[wasm_bindgen]
-pub fn optimize() {
-    //wp_repr: &mut [f64]) -> Vec<f64> {
-    /*let wps: Vec<waypoint::Waypoint> = wp_repr
-            .chunks_mut(6)
-            .map(|chunk| waypoint::Waypoint::from_array(chunk))
-            .collect();
-    */
+pub fn optimize(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
+    let param: OptParam = param_value.into_serde().unwrap();
 
-    let wps = vec![
-        Waypoint::new(0., 0., 10., 0., 0., 0.),
-        Waypoint::new(10., 10., 0., 10., 0., 0.),
-        Waypoint::new(20., 20., 10., 0., 0., 0.),
-        Waypoint::new(30., 30., 0., 10., 0., 0.),
-    ];
+    let wps: Vec<Waypoint> = wps_value.into_serde().unwrap();
 
     if wps.len() <= 2 {
-        return; // Vec::new();
+        return JsValue::from_serde(&Vec::<f64>::new()).unwrap();
     }
 
     let init_acc = wps
@@ -97,28 +82,23 @@ pub fn optimize() {
         .flatten()
         .collect();
 
-    let linesearch = HagerZhangLineSearch::new();
+    let linesearch = MoreThuenteLineSearch::new();
 
     let solver = SteepestDescent::new(linesearch);
 
     let cost = OptProblem {
-        waypoints: wps.clone(),
-        eps: 1e-2,
-        samples: 10,
+        waypoints: wps,
+        eps: param.eps,
+        samples: param.samples,
     };
 
-    log("Optimizing");
-
-    let res = match Executor::new(cost, solver, init_acc)
-        .max_iters(100)
-        .target_cost(0.001)
+    let res = Executor::new(cost, solver, init_acc)
+        .max_iters(param.max_iters)
+        .target_cost(param.target_cost)
         .run()
-    {
-        Ok(result) => result,
-        Err(err) => panic!("{:#?}", err),
-    };
+        .unwrap();
 
-    log(&format!("{}", res));
+    JsValue::from_serde(&res).unwrap()
 }
 
 #[cfg(test)]

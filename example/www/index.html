@@ -1,80 +1,39 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 </head>
+
 <body>
     <script type="module">
-        import init from "./wayfinder_wasm.js";
+        import init, { wps_to_path, optimize } from "./wayfinder_wasm.js";
+        var path_param = { max_dx: 1.0, max_dy: 1.0, max_dt: 5.0 };
+        var opt_param = {
+            eps: 1e-2,
+            samples: 10,
+            max_iters: 10,
+            target_cost: 0.0
+        };
+        var wps = [
+                { point: [0, 0], tangent: [10, 0], curvature: [0, 0] }, 
+                { point: [10, 10], tangent: [0, 10], curvature: [0, 0] }, 
+                { point: [20, 20], tangent: [10, 0], curvature: [0, 0] }, 
+                { point: [30, 30], tangent: [0, 10], curvature: [0, 0] }];
 
-        init().then(init => init.optimize());
-
-        function L(x) {
-            if (0 <= x && x <= 20 * Math.SQRT1_2) {
-                return 4 * Math.SQRT2 + x
-            } else if (20 * Math.SQRT1_2 < x && x <= 28 * Math.SQRT1_2) {
-                return 28 * Math.SQRT1_2 - (x - 20 * Math.SQRT1_2);
-            } else {
-                return 0;
-            }
+        var timeit = function(f) {
+            var t = performance.now();
+            var res = f();
+            var dt = performance.now() - t;
+            console.log(dt);
+            return res;
         }
 
-        function B(i) {
-            let s_i = i * (5+11/16)/12;
-            let e_i = (i+1) * (5+11/16)/12;
+        init().then(init => {
+            timeit(() => console.log(wps_to_path(wps, path_param)));
+            timeit(() => console.log(optimize(wps, opt_param)));
+        });
 
-            if (s_i < 20 * Math.SQRT1_2 && 20 * Math.SQRT1_2 < e_i) {
-                return L(20 * Math.SQRT1_2); 
-            } else {
-                return Math.max(L(s_i), L(e_i));
-            }
-        }
-
-        function len_to_at_least_four(board_span, max_len) {
-            let leftover = board_span % max_len;
-            let full_boards = Math.trunc(board_span / max_len);
-            let boards = [];
-
-            if (leftover < 4/3) {
-                full_boards -= 1;
-                boards.push(10 + 2/3);
-                boards.push(leftover + 4/3);
-            } else {
-                boards.push(leftover);
-            }
-
-            var i;
-            for(i = 0; i < full_boards; i++) {
-                boards.push(max_len);
-            }
-
-            return boards;
-        }
-
-        function total_length(max_len) {
-            var i, sum = 0, boards = [];
-            for (i = 0; i < 42; i++) {
-                let tmp = B(i);
-                sum = sum + tmp;
-
-                if (i % 2 == 0) {
-                    boards.push(4);
-                    tmp -= 4;
-                }
-
-                boards.push(...len_to_at_least_four(tmp, max_len));
-            }
-
-            boards.sort((a, b) => a-b);
-
-            console.log("Board length: " + max_len);
-            console.log("Total feet: " + sum);
-            console.log("Total cut boards: " + boards.length);
-            console.log("Boards used: ", boards);
-
-            return sum;
-        }
-
-        total_length(12);
     </script>
 </body>
+
 </html>

@@ -4,20 +4,19 @@ version = "0.1.0"
 authors = ["Jordan McMichael <jlmcmchl@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [profile.release]
 lto = true
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-cfg-if = "0.1"
-wasm-bindgen = "0.2"
-serde = "1.0"
-wayfinder = { path = "../"}
+cfg-if = "0.1.10"
+wasm-bindgen = {version= "0.2.58", features=["serde-serialize"] }
+serde = "1.0.104"
+wayfinder = { path = "../" }
 argmin = { git = "https://github.com/jlmcmchl/argmin.git", branch = "master" }
+# argmin = { path = "../../argmin" }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires

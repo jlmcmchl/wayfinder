@@ -1,5 +1,7 @@
-use crate::{Hermite, Spline, Parameterizer, Pose, Translation, Rotation, Vector};
+use crate::{Hermite, Parameterizer, Pose, Rotation, Spline, Translation, Vector};
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Cheesy {
     max_dx: f64,
     max_dy: f64,

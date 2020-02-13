@@ -1,7 +1,7 @@
 use crate::Vec2;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Waypoint {
     pub point: Vec2,
     pub tangent: Vec2,

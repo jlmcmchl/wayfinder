@@ -4,9 +4,9 @@ mod jaci;
 pub use cheesy::*;
 pub use jaci::*;
 
-use crate::Spline;
 use crate::Hermite;
 use crate::Point;
+use crate::Spline;
 
 pub trait Parameterizer {
     fn should_subdivide(&self, spline: &Hermite, t_curr: f64, t_step: f64) -> bool;

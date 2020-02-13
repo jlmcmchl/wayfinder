@@ -38,7 +38,6 @@ impl ArgminOp for OptProblem {
     }
 
     fn gradient(&self, param: &Vec<f64>) -> Result<Vec<f64>, Error> {
-        log("Calculating Gradient");
         let integral_ref = self.apply(param)?;
         let mut wps = self.waypoints.clone();
 

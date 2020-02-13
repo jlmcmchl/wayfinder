@@ -1,5 +1,7 @@
-use crate::{Hermite, Spline, Parameterizer, Vec2, Matrix, MatMul, Vector, Coordinate};
+use crate::{Coordinate, Hermite, MatMul, Matrix, Parameterizer, Spline, Vec2, Vector};
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Jaci {
     max_ds: f64,
     max_dc: f64,

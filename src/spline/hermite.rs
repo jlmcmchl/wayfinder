@@ -1,4 +1,4 @@
-use crate::{Spline, Mat2x6, Waypoint, Mat6, Vec2, Vector, Coordinate, MatMul};
+use crate::{Coordinate, Mat2x6, Mat6, MatMul, Spline, Vec2, Vector, Waypoint};
 
 pub type Hermite = Mat2x6;
 
