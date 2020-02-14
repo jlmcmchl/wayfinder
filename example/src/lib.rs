@@ -53,8 +53,20 @@ pub fn main() {
 }
 
 #[wasm_bindgen]
-pub fn wps_to_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
+pub fn wps_to_cheesy_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
     let param: Cheesy = param_value.into_serde().unwrap();
+    let wps: Vec<Waypoint> = wps_value.into_serde().unwrap();
+
+    let hermites = hermites(&wps);
+
+    let segments = param.parameterize(&hermites);
+
+    JsValue::from_serde(&segments).unwrap()
+}
+
+#[wasm_bindgen]
+pub fn wps_to_jaci_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
+    let param: Jaci = param_value.into_serde().unwrap();
     let wps: Vec<Waypoint> = wps_value.into_serde().unwrap();
 
     let hermites = hermites(&wps);
@@ -98,7 +110,7 @@ pub fn optimize(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
         .run()
         .unwrap();
 
-    JsValue::from_serde(&res).unwrap()
+    JsValue::from_serde(&res.state).unwrap()
 }
 
 #[cfg(test)]
