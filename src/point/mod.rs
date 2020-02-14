@@ -11,7 +11,7 @@ pub struct Point {
 
 impl Point {
     pub fn heading(&self) -> Vec2 {
-        self.velocity
+        self.velocity.scale(1. / self.velocity.norm())
     }
 
     pub fn curvature(&self) -> f64 {
