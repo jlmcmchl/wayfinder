@@ -35,10 +35,10 @@ cfg_if! {
 
 #[derive(Deserialize)]
 pub struct OptParam {
-    pub eps: f64,
+    pub eps: f32,
     pub samples: u64,
     pub max_iters: u64,
-    pub target_cost: f64,
+    pub target_cost: f32,
 }
 
 #[wasm_bindgen]
@@ -54,8 +54,8 @@ pub fn main() {
 
 #[wasm_bindgen]
 pub fn wps_to_cheesy_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
-    let param: Cheesy = param_value.into_serde().unwrap();
-    let wps: Vec<Waypoint> = wps_value.into_serde().unwrap();
+    let param: Cheesy<f32> = param_value.into_serde().unwrap();
+    let wps: Vec<Waypoint<f32>> = wps_value.into_serde().unwrap();
 
     let hermites = hermites(&wps);
 
@@ -66,8 +66,8 @@ pub fn wps_to_cheesy_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue
 
 #[wasm_bindgen]
 pub fn wps_to_jaci_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
-    let param: Jaci = param_value.into_serde().unwrap();
-    let wps: Vec<Waypoint> = wps_value.into_serde().unwrap();
+    let param: Jaci<f32> = param_value.into_serde().unwrap();
+    let wps: Vec<Waypoint<f32>> = wps_value.into_serde().unwrap();
 
     let hermites = hermites(&wps);
 
@@ -80,18 +80,18 @@ pub fn wps_to_jaci_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
 pub fn optimize(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
     let param: OptParam = param_value.into_serde().unwrap();
 
-    let wps: Vec<Waypoint> = wps_value.into_serde().unwrap();
+    let wps: Vec<Waypoint<f32>> = wps_value.into_serde().unwrap();
 
     if wps.len() <= 2 {
-        return JsValue::from_serde(&Vec::<f64>::new()).unwrap();
+        return JsValue::from_serde(&Vec::<f32>::new()).unwrap();
     }
 
     let init_acc = wps
         .iter()
         .enumerate()
         .filter(|(j, _)| *j > 0 && *j < wps.len() - 1)
-        .map(|(_, wp)| wp.curvature.to_vec())
-        .flatten()
+        .flat_map(|(_, wp)| wp.curvature.iter())
+        .copied()
         .collect();
 
     let linesearch = MoreThuenteLineSearch::new();

@@ -1,21 +1,24 @@
-use crate::{Coordinate, Vec2, Vector};
+use nalgebra::{Matrix2, Rotation2, Scalar, Vector2};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Point {
-    pub position: Vec2,
-    pub velocity: Vec2,
-    pub acceleration: Vec2,
-    pub jerk: Vec2,
+pub struct Point<N: Scalar> {
+    pub position: Vector2<N>,
+    pub velocity: Vector2<N>,
+    pub acceleration: Vector2<N>,
+    pub jerk: Vector2<N>,
 }
 
-impl Point {
-    pub fn heading(&self) -> Vec2 {
-        self.velocity.scale(1. / self.velocity.norm())
+impl Point<f32> {
+    pub fn heading(&self) -> Rotation2<f32> {
+        let heading = self.velocity.normalize();
+        Rotation2::from_matrix(&Matrix2::from_column_slice(&[
+            heading.x, heading.y, -heading.y, heading.x,
+        ]))
     }
 
-    pub fn curvature(&self) -> f64 {
-        (self.velocity.x() * self.acceleration.y() - self.velocity.y() * self.acceleration.x())
+    pub fn curvature(&self) -> f32 {
+        (self.velocity.x * self.acceleration.y - self.velocity.y * self.acceleration.x)
             / self.velocity.norm().powi(3)
     }
 }

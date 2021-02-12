@@ -2,6 +2,7 @@ use argmin::prelude::*;
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
 use wayfinder::*;
+use nalgebra::Vector2;
 
 #[wasm_bindgen]
 extern "C" {
@@ -11,23 +12,24 @@ extern "C" {
 
 #[derive(Clone, Serialize)]
 pub struct OptProblem {
-    pub waypoints: Vec<Waypoint>,
-    pub eps: f64,
+    pub waypoints: Vec<Waypoint<f32>>,
+    pub eps: f32,
     pub samples: u64,
 }
 
 impl ArgminOp for OptProblem {
-    type Param = Vec<f64>;
-    type Output = f64;
+    type Param = Vec<f32>;
+    type Output = f32;
     type Hessian = ();
     type Jacobian = ();
+    type Float = f32;
 
-    fn apply(&self, param: &Vec<f64>) -> Result<Self::Output, Error> {
+    fn apply(&self, param: &Vec<f32>) -> Result<Self::Output, Error> {
         let mut wps = self.waypoints.clone();
         wps.iter_mut()
             .skip(1)
             .zip(param.chunks(2))
-            .for_each(|(wp, acc)| wp.curvature = [acc[0], acc[1]]);
+            .for_each(|(wp, acc)| wp.curvature = Vector2::from_column_slice(acc));
 
         let integral = hermites(&wps)
             .iter()
@@ -37,18 +39,18 @@ impl ArgminOp for OptProblem {
         Ok(integral)
     }
 
-    fn gradient(&self, param: &Vec<f64>) -> Result<Vec<f64>, Error> {
+    fn gradient(&self, param: &Vec<f32>) -> Result<Vec<f32>, Error> {
         let integral_ref = self.apply(param)?;
         let mut wps = self.waypoints.clone();
 
         wps.iter_mut()
             .skip(1)
             .zip(param.chunks(2))
-            .for_each(|(wp, acc)| wp.curvature = [acc[0], acc[1]]);
+            .for_each(|(wp, acc)| wp.curvature = Vector2::from_column_slice(acc));
 
         let res = (0..param.len())
             .map(|i| {
-                let mut wps_forward: Vec<Waypoint> = wps.clone();
+                let mut wps_forward: Vec<Waypoint<f32>> = wps.clone();
 
                 wps_forward
                     .iter_mut()

@@ -2,31 +2,65 @@
 <html>
 
 <head>
+    <style>
+        body {
+            background-color: aqua;
+        }
+
+        #field {
+            background: url('2020-field.png');
+            background-size: 100% 100%;
+            width: 100%;
+        }
+
+        #list {
+            width: 300px;
+            display: block;
+            margin: auto;
+        }
+
+        #list div {
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
+    <div>
+        <!--svg id="field"></svg-->
+        <div id="list">
+            <div class="listItem">afdsafdsafdsafdsa</div>
+            <div class="listItem">bfdsafdsafdsafdsa</div>
+            <div class="listItem">cfdsafdsafdsafdsa</div>
+            <div class="listItem">dfdsafdsafdsafdsa</div>
+            <div class="listItem">efdsafdsafdsafdsa</div>
+            <div class="listItem">ffdasfdsafdsafdsa</div>
+        </div>
+    </div>
     <script type="module">
         import init, { wps_to_cheesy_path, wps_to_jaci_path, optimize } from "./wayfinder_wasm.js";
         var cheesy_param = { max_dx: 1.0, max_dy: 1.0, max_dt: 1.0 };
-        var jaci_param = { max_ds: 0.1, max_dc: 0.01 };
+        var jaci_param = { max_ds: 1.0, max_dc: 0.1 };
         var opt_param = {
             eps: 1e-2,
             samples: 10,
-            max_iters: 5,
+            max_iters: 100,
             target_cost: 0.0
         };
         var wps = [
-                { point: [0, 0], tangent: [10, 0], curvature: [0, 0] }, 
-                { point: [10, 10], tangent: [0, 10], curvature: [0, 0] }, 
-                { point: [20, 20], tangent: [10, 0], curvature: [0, 0] }, 
-                { point: [30, 30], tangent: [0, 10], curvature: [0, 0] },
-                { point: [40, 40], tangent: [10, 0], curvature: [0, 0] },
-                { point: [50, 50], tangent: [0, 10], curvature: [0, 0] },
-                { point: [60, 60], tangent: [10, 0], curvature: [0, 0] },
-                { point: [70, 70], tangent: [0, 10], curvature: [0, 0] }
-            ];
+            { point: [0, 0], tangent: [10, 0], curvature: [0, 0] },
+            { point: [10, 10], tangent: [0, 10], curvature: [0, 0] },
+            { point: [20, 20], tangent: [10, 0], curvature: [0, 0] },
+            { point: [30, 30], tangent: [0, 10], curvature: [0, 0] },
+            { point: [40, 40], tangent: [10, 0], curvature: [0, 0] },
+            { point: [50, 50], tangent: [0, 10], curvature: [0, 0] },
+            { point: [60, 60], tangent: [10, 0], curvature: [0, 0] },
+            { point: [70, 70], tangent: [0, 10], curvature: [0, 0] },
+            { point: [0, 0], tangent: [-10, 0], curvature: [0, 0] }
+        ];
 
-        var timeit = function(f, times=1) {
+        var timeit = function (f, times = 1) {
             var total_time = 0;
             var i = 0;
             while (i < times) {
@@ -39,7 +73,19 @@
             return res;
         }
 
-        var optimize_and_parameterize_cheesy = function(wps, cheesy_param, opt_param) {
+        var optimize_and_parameterize_cheesy = function (wps, cheesy_param, opt_param) {
+            var wps = [
+                { point: [0, 0], tangent: [10, 0], curvature: [0, 0] },
+                { point: [10, 10], tangent: [0, 10], curvature: [0, 0] },
+                { point: [20, 20], tangent: [10, 0], curvature: [0, 0] },
+                { point: [30, 30], tangent: [0, 10], curvature: [0, 0] },
+                { point: [40, 40], tangent: [10, 0], curvature: [0, 0] },
+                { point: [50, 50], tangent: [0, 10], curvature: [0, 0] },
+                { point: [60, 60], tangent: [10, 0], curvature: [0, 0] },
+                { point: [70, 70], tangent: [0, 10], curvature: [0, 0] },
+                { point: [0, 0], tangent: [-10, 0], curvature: [0, 0] }
+            ];
+
             var curv = optimize(wps, opt_param).best_param;
 
             wps[1].curvature[0] = curv[0];
@@ -55,10 +101,54 @@
             wps[7].curvature[0] = curv[10];
             wps[7].curvature[1] = curv[11];
 
-            return wps_to_cheesy_path(wps, cheesy_param);
+            return [wps, wps_to_cheesy_path(wps, cheesy_param)];
         }
 
-        var optimize_and_parameterize_jaci = function(wps, jaci_param, opt_param) {
+        var parameterize_cheesy = function (wps, cheesy_param) {
+            var wps = [
+                { point: [0, 0], tangent: [10, 0], curvature: [0, 0] },
+                { point: [10, 10], tangent: [0, 10], curvature: [0, 0] },
+                { point: [20, 20], tangent: [10, 0], curvature: [0, 0] },
+                { point: [30, 30], tangent: [0, 10], curvature: [0, 0] },
+                { point: [40, 40], tangent: [10, 0], curvature: [0, 0] },
+                { point: [50, 50], tangent: [0, 10], curvature: [0, 0] },
+                { point: [60, 60], tangent: [10, 0], curvature: [0, 0] },
+                { point: [70, 70], tangent: [0, 10], curvature: [0, 0] },
+                { point: [0, 0], tangent: [-10, 0], curvature: [0, 0] }
+            ];
+
+            return [wps, wps_to_cheesy_path(wps, cheesy_param)];
+        }
+
+        var parameterize_jaci = function (wps, jaci_param) {
+            var wps = [
+                { point: [0, 0], tangent: [10, 0], curvature: [0, 0] },
+                { point: [10, 10], tangent: [0, 10], curvature: [0, 0] },
+                { point: [20, 20], tangent: [10, 0], curvature: [0, 0] },
+                { point: [30, 30], tangent: [0, 10], curvature: [0, 0] },
+                { point: [40, 40], tangent: [10, 0], curvature: [0, 0] },
+                { point: [50, 50], tangent: [0, 10], curvature: [0, 0] },
+                { point: [60, 60], tangent: [10, 0], curvature: [0, 0] },
+                { point: [70, 70], tangent: [0, 10], curvature: [0, 0] },
+                { point: [0, 0], tangent: [-10, 0], curvature: [0, 0] }
+            ];
+            
+            return [wps, wps_to_jaci_path(wps, jaci_param)];
+        }
+
+        var optimize_and_parameterize_jaci = function (wps, jaci_param, opt_param) {
+            var wps = [
+                { point: [0, 0], tangent: [10, 0], curvature: [0, 0] },
+                { point: [10, 10], tangent: [0, 10], curvature: [0, 0] },
+                { point: [20, 20], tangent: [10, 0], curvature: [0, 0] },
+                { point: [30, 30], tangent: [0, 10], curvature: [0, 0] },
+                { point: [40, 40], tangent: [10, 0], curvature: [0, 0] },
+                { point: [50, 50], tangent: [0, 10], curvature: [0, 0] },
+                { point: [60, 60], tangent: [10, 0], curvature: [0, 0] },
+                { point: [70, 70], tangent: [0, 10], curvature: [0, 0] },
+                { point: [0, 0], tangent: [-10, 0], curvature: [0, 0] }
+            ];
+
             var curv = optimize(wps, opt_param).best_param;
 
             wps[1].curvature[0] = curv[0];
@@ -74,15 +164,59 @@
             wps[7].curvature[0] = curv[10];
             wps[7].curvature[1] = curv[11];
 
-            return wps_to_jaci_path(wps, jaci_param);
+            return [wps, wps_to_jaci_path(wps, jaci_param)];
         }
+
+        var initCanvas = () => {
+            var canvas = document.getElementById("field");
+            // canvas.setAttribute("height", canvas.clientWidth * 0.405);
+        };
+
+        var canvas = document.getElementById("field");
+        // Get the position of the mouse relative to the canvas
+        var getMousePos = (canvasDom, mouseEvent) => {
+            var rect = canvasDom.getBoundingClientRect();
+            return {
+                x: (mouseEvent.clientX - rect.left),
+                y: (mouseEvent.clientY - rect.top)
+            };
+        }
+
+        // canvas.addEventListener("mousemove", function (e) {
+        //     var mousePos = getMousePos(canvas, e);
+        //     console.log(mousePos);
+        // }, false);
+
+        const setDraggedOver = (e) => {
+            e.preventDefault();
+            //draggedOver = Number.isNaN(parseInt(e.target.innerText)) ? e.target.innerText : parseInt(e.target.innerText)
+        }
+
+        const setDragging = (e) => {
+            //dragging = Number.isNaN(parseInt(e.target.innerText)) ? e.target.innerText : parseInt(e.target.innerText)
+        }
+
+        document.addEventListener("DOMContentLoaded", initCanvas);
+        window.addEventListener("resize", initCanvas);
+        document.addEventListener("DOMContentLoaded", () => {
+            [...document.getElementsByClassName("listItem")].forEach((elem) => {
+                elem.draggable = true;
+                elem.addEventListener("drag", setDragging);
+                elem.addEventListener("dragover", setDraggedOver);
+            });
+        });
+
 
         init().then(init => {
             init.main();
-            console.log(timeit(() => optimize_and_parameterize_cheesy(wps, cheesy_param, opt_param), 50));
-            console.log(timeit(() => optimize_and_parameterize_jaci(wps, jaci_param, opt_param), 50));
-
+            console.log(timeit(() => optimize(wps, opt_param), 100));
+            // console.log(timeit(() => optimize_and_parameterize_cheesy(wps, cheesy_param, opt_param), 10));
+            // console.log(timeit(() => optimize_and_parameterize_jaci(wps, jaci_param, opt_param), 10));
+            // console.log(timeit(() => parameterize_jaci(wps, jaci_param), 10));
+            // console.log(timeit(() => parameterize_cheesy(wps, cheesy_param), 10));
+            console.log(timeit(() => optimize(wps, opt_param), 10));
         });
+
 
     </script>
 </body>

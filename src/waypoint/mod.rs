@@ -1,19 +1,9 @@
-use crate::Vec2;
+use nalgebra::{Scalar, Vector2};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct Waypoint {
-    pub point: Vec2,
-    pub tangent: Vec2,
-    pub curvature: Vec2,
-}
-
-impl Waypoint {
-    pub fn new(x: f64, y: f64, dx: f64, dy: f64, ddx: f64, ddy: f64) -> Waypoint {
-        Waypoint {
-            point: [x, y],
-            tangent: [dx, dy],
-            curvature: [ddx, ddy],
-        }
-    }
+pub struct Waypoint<N: Scalar> {
+    pub point: Vector2<N>,
+    pub tangent: Vector2<N>,
+    pub curvature: Vector2<N>,
 }

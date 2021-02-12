@@ -4,15 +4,14 @@ mod jaci;
 pub use cheesy::*;
 pub use jaci::*;
 
+use crate::{Point, Spline};
 use crate::Hermite;
-use crate::Point;
-use crate::Spline;
 
 pub trait Parameterizer {
-    fn should_subdivide(&self, spline: &Hermite, t_curr: f64, t_step: f64) -> bool;
+    fn should_subdivide(&self, spline: &Hermite<f32>, t_curr: f32, t_step: f32) -> bool;
 
-    fn parameterize(&self, splines: &[Hermite]) -> Vec<Point> {
-        let mut pts = Vec::<Point>::new();
+    fn parameterize(&self, splines: &[Hermite<f32>]) -> Vec<Point<f32>> {
+        let mut pts = Vec::<Point<f32>>::new();
         pts.push(splines.get(0).unwrap().point_at(0.));
 
         for spline in splines {
@@ -22,7 +21,7 @@ pub trait Parameterizer {
         pts
     }
 
-    fn subdivide(&self, spline: &Hermite, out: &mut Vec<Point>, t0: f64, t1: f64) {
+    fn subdivide(&self, spline: &Hermite<f32>, out: &mut Vec<Point<f32>>, t0: f32, t1: f32) {
         let mut t_curr = t0;
         let mut t_step = t1 - t0;
         let t_eps = 1e-3;

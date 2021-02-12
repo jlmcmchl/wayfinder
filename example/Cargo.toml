@@ -7,16 +7,18 @@ edition = "2018"
 [profile.release]
 lto = true
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O2"]
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-cfg-if = "0.1.10"
-wasm-bindgen = {version= "0.2.58", features=["serde-serialize"] }
-serde = "1.0.104"
+cfg-if = "1.0"
+wasm-bindgen = {version= "0.2", features=["serde-serialize"] }
+serde = "1.0"
 wayfinder = { path = "../" }
 argmin = { git = "https://github.com/jlmcmchl/argmin.git", branch = "master" }
-# argmin = { path = "../../argmin" }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -27,3 +29,5 @@ console_error_panic_hook = { version = "0.1", optional = true }
 # compared to the default allocator's ~10K. It is slower than the default
 # allocator, however.
 wee_alloc = { version = "0.4", optional = true }
+
+nalgebra = { version = "0.24", features=["serde-serialize"] }

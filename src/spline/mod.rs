@@ -1,18 +1,19 @@
 mod hermite;
 
 pub use hermite::*;
+use nalgebra::{Rotation2, Scalar, Vector2};
 
-use crate::{Point, Vec2, Vector, Waypoint};
+use crate::{Point, Waypoint};
 
-pub trait Spline<T> {
-    fn from_wps(start: &Waypoint, end: &Waypoint) -> T;
+pub trait Spline<T, N: Scalar> {
+    fn from_wps(start: &Waypoint<N>, end: &Waypoint<N>) -> T;
 
-    fn position(&self, t: f64) -> Vec2;
-    fn velocity(&self, t: f64) -> Vec2;
-    fn acceleration(&self, t: f64) -> Vec2;
-    fn jerk(&self, t: f64) -> Vec2;
+    fn position(&self, t: f32) -> Vector2<N>;
+    fn velocity(&self, t: f32) -> Vector2<N>;
+    fn acceleration(&self, t: f32) -> Vector2<N>;
+    fn jerk(&self, t: f32) -> Vector2<N>;
 
-    fn point_at(&self, t: f64) -> Point {
+    fn point_at(&self, t: f32) -> Point<N> {
         Point {
             position: self.position(t),
             velocity: self.velocity(t),
@@ -21,20 +22,11 @@ pub trait Spline<T> {
         }
     }
 
-    fn rotation(&self, t: f64) -> Vec2 {
-        let d = self.velocity(t);
-        d.scale(1. / d.norm())
-    }
+    fn rotation(&self, t: f32) -> Rotation2<N>;
 
-    fn curvature(&self, _: f64) -> f64 {
-        0.
-    }
+    fn curvature(&self, t: f32) -> N;
 
-    fn d_curvature(&self, _: f64) -> f64 {
-        0.
-    }
+    fn d_curvature(&self, t: f32) -> N;
 
-    fn integral_d_curvature_d_t_squared(&self, _: u64) -> f64 {
-        0.
-    }
+    fn integral_d_curvature_d_t_squared(&self, samples: u64) -> N;
 }
