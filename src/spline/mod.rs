@@ -22,8 +22,7 @@ pub trait Spline<T> {
     }
 
     fn rotation(&self, t: f64) -> Vec2 {
-        let d = self.velocity(t);
-        d.scale(1. / d.norm())
+        self.velocity(t).unit()
     }
 
     fn curvature(&self, _: f64) -> f64 {

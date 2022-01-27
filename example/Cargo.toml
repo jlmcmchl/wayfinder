@@ -6,14 +6,18 @@ edition = "2018"
 
 [profile.release]
 lto = true
+opt-level = 3
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-O4']
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 cfg-if = "0.1.10"
-wasm-bindgen = {version= "0.2.58", features=["serde-serialize"] }
-serde = "1.0.104"
+wasm-bindgen = {version= "0.2.60", features=["serde-serialize"] }
+serde = "1.0.105"
 wayfinder = { path = "../" }
 argmin = { git = "https://github.com/jlmcmchl/argmin.git", branch = "master" }
 # argmin = { path = "../../argmin" }

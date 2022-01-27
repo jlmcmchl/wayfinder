@@ -20,16 +20,12 @@ static COEFF_MATRIX: &Mat6 = &[
 
 impl Spline<Hermite> for Hermite {
     fn from_wps(start: &Waypoint, end: &Waypoint) -> Hermite {
-        let dist = 1.2 * end.point.add(start.point.scale(-1.)).norm();
-        let scaled_tangent_0 = start.tangent.unit().scale(dist);
-        let scaled_tangent_1 = end.tangent.unit().scale(dist);
-
         let coords = [
             start.point,
-            scaled_tangent_0,
+            start.tangent,
             start.curvature,
             end.point,
-            scaled_tangent_1,
+            end.tangent,
             end.curvature,
         ];
 

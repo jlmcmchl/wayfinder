@@ -17,6 +17,7 @@ pub trait Parameterizer {
 
         for spline in splines {
             self.subdivide(&spline, &mut pts, 0., 1.);
+            pts.push(spline.point_at(1.));
         }
 
         pts

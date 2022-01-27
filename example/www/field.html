@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="libs/bootstrap.min.css" />
+	<link rel="stylesheet" href="libs/bootstrap-toggle.min.css" />
+
+	<script src="libs/jquery-3.3.1.min.js"></script>
+	<script src="libs/jquery-ui.min.js"></script>
+	<script src="libs/bootstrap.min.js"></script>
+	<script src="libs/bootstrap-toggle.min.js"></script>
+	<script src="libs/d3.min.js"></script>
+	<style>
+		svg {
+			padding: 0;
+			margin: auto;
+			display: block;
+		}
+
+		line {
+			shape-rendering: crispEdges;
+			vector-effect: non-scaling-stroke;
+
+			stroke: #000;
+			stroke-width: 2px;
+		}
+
+		circle {
+			shape-rendering: crispEdges;
+			vector-effect: non-scaling-stroke;
+
+			stroke: black;
+			stroke-width: 1.5px;
+		}
+
+		rect:hover {
+			cursor: pointer;
+		}
+
+		circle:hover {
+			cursor: pointer;
+		}
+
+		rect {
+			stroke: blue;
+		}
+
+		circle {
+			fill: yellow;
+		}
+
+		circle.active-d3-item {
+			fill: darkorange !important;
+		}
+
+		rect.active-d3-item {
+			fill-opacity: 0.5 !important;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div class="container">
+		<br />
+		<div class="form-inline form-group controls" style="text-align: center">
+			<div class="input-group">
+				<div class="input-group-addon"><span class="glyphicon glyphicon-home"></span></div>
+				<select class="form-control" id="start">
+					<option value="28">Left</option>
+					<option value="230">Center</option>
+					<option value="296">Right</option>
+				</select>
+			</div>
+			<button type="button" class="form-control" id="reset"><span class="glyphicon glyphicon-refresh"></span> Reset</button>
+			<button type="button" class="form-control resetCurvature"><span class="glyphicon glyphicon-repeat"></span>
+				Reset Curvature</button>
+			<button type="button" class="form-control optimize"><span class="glyphicon glyphicon-flash"></span>
+				Optimize</button>
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Filename" id="filename">
+				<span class="input-group-btn">
+					<button type="button" class="btn btn-default dl-waypoints"><span class="glyphicon glyphicon-download-alt"></span>
+						Waypoints</button>
+				</span>
+			</div>
+		</div>
+		<br />
+		<div id="canvas-container" class="form-inline">
+		</div>
+		<br />
+		<div class="form-inline form-group" id="pose-container">
+			<div class="input-group">
+				<div class="input-group-addon"><span class="glyphicon glyphicon-menu-hamburger"></span></div>
+				<div class="input-group-addon remove" onclick="poseTable.remove(this)"><span class="glyphicon glyphicon-remove"></span></div>
+				<span class="input-group-addon">X</span>
+				<input id="x" type="number" class="form-control input-sm text-right" onchange="poseTable.refresh()" placeholder="X"
+				 min=0 value=509 />
+				<span class="input-group-addon">Y</span>
+				<input id="y" type="number" class="form-control input-sm text-right" onchange="poseTable.refresh()" placeholder="Y"
+				 min=0 value=230 />
+				<span class="input-group-addon">Heading</span>
+				<input id="head" type="number" class="form-control input-sm text-right" onchange="poseTable.refresh()" placeholder="Heading"
+				 value=-180 />
+			</div>
+		</div>
+		<script src="../pkg/wayfinder_wasm.js"></script>
+		<script type="module">
+			import Field from './field.js';
+			import Pose2d from './Pose2d.js';
+			import PoseTable from './PoseTable.js';
+
+			var canvas = new Field('div#canvas-container');
+			var poseTable = new PoseTable('div#pose-container');
+
+			canvas.setTable(poseTable);
+			poseTable.setCanvas(canvas);
+
+			$('#start').change(() => {
+				var x = parseInt($("#start option:selected").val());
+				poseTable.setOrigin([509, x]);
+			});
+
+			$('#reset').click(() =>
+				poseTable.reset()
+			);
+
+			$('#pose-container').sortable({
+				helper: fixWidthHelper,
+				cancel: "input,.remove",
+				deactivate: () => poseTable.refresh()
+			}).disableSelection();
+
+			function fixWidthHelper(e, ui) {
+				ui.children().each(function () {
+					$(this).width($(this).width());
+				});
+				return ui;
+			}
+
+			$('.resetCurvature').click(() => {
+				poseTable.resetCurvature();
+				
+			});
+
+			$('.optimize').click(() => {
+				let t = new Date();
+				var opt_wps = canvas.optimizePath();
+				console.log((new Date() - t) / 1000);
+			});
+
+			$('.dl-waypoints').click(() => {
+				var fname = $('#filename').val() + '_wps';
+				var headers = 'pos_x,pos_y,vel_x,vel_y,acc_x,acc_y';
+				var content = poseTable.waypoints().map(v => v._data.join(',')).join('\n');
+
+				downloadCSV(fname, headers, content);
+			});
+
+			function downloadCSV(fname, header, content) {
+				var prefix = 'data:text/csv;charset=utf-8,';
+				var link = document.createElement('a');
+				link.style = 'display:none;';
+				link.setAttribute('href', encodeURI(prefix + header + '\n' + content));
+				link.setAttribute('download', fname + '.csv');
+				document.body.appendChild(link);
+				link.click();
+			}
+		</script>
+	</div>
+</body>
+
+</html>

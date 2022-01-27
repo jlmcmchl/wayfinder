@@ -72,6 +72,7 @@ pub fn wps_to_jaci_path(wps_value: &JsValue, param_value: &JsValue) -> JsValue {
     let hermites = hermites(&wps);
 
     let segments = param.parameterize(&hermites);
+    let segments = param.parameterize(&hermites);
 
     JsValue::from_serde(&segments).unwrap()
 }

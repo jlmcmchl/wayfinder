@@ -8,10 +8,10 @@
     <script type="module">
         import init, { wps_to_cheesy_path, wps_to_jaci_path, optimize } from "./wayfinder_wasm.js";
         var cheesy_param = { max_dx: 1.0, max_dy: 1.0, max_dt: 1.0 };
-        var jaci_param = { max_ds: 0.1, max_dc: 0.01 };
+        var jaci_param = { max_ds: 1.0, max_dc: 0.1 };
         var opt_param = {
-            eps: 1e-2,
-            samples: 10,
+            eps: 1e-4,
+            samples: 5,
             max_iters: 5,
             target_cost: 0.0
         };
@@ -26,16 +26,43 @@
                 { point: [70, 70], tangent: [0, 10], curvature: [0, 0] }
             ];
 
+        var avg = function(arr) {
+            if (arr.length == 0) {
+                return 0;
+            }
+
+            var total = 0;
+            var i;
+            for (i = 0; i < arr.length; i++) {
+                total += arr[i];
+            }
+            return total / arr.length;
+        }
+
+        var stdev = function(arr) {
+            if (arr.length < 2) {
+                return 0;
+            }
+
+            var arr_avg = avg(arr);
+            var total = 0;
+            var i;
+            for (i = 0; i < arr.length; i++) {
+                total += Math.pow(arr[i] - arr_avg, 2);
+            }
+            return Math.sqrt(total / (arr.length - 1));
+        }
+
         var timeit = function(f, times=1) {
-            var total_time = 0;
+            var time_arr = [];
             var i = 0;
             while (i < times) {
                 var t = performance.now();
                 var res = f();
-                total_time += performance.now() - t;
+                time_arr.push(performance.now() - t);
                 i += 1;
             }
-            console.log(total_time / times);
+            console.log(avg(time_arr), stdev(time_arr));
             return res;
         }
 
@@ -79,8 +106,8 @@
 
         init().then(init => {
             init.main();
-            console.log(timeit(() => optimize_and_parameterize_cheesy(wps, cheesy_param, opt_param), 50));
-            console.log(timeit(() => optimize_and_parameterize_jaci(wps, jaci_param, opt_param), 50));
+            console.log(timeit(() => optimize_and_parameterize_cheesy(wps, cheesy_param, opt_param), 100));
+            console.log(timeit(() => optimize_and_parameterize_jaci(wps, jaci_param, opt_param), 100));
 
         });
 
